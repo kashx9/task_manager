@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User{
+  id              String            @id @default(uuid())
+  name            String
+  email           String            @unique
+  password        String 
+
+  createdTasks    Task[]            @relation("TaskCreator")
+  assignedTasks   Task[]            @relation("TaskAssignee")
+  comments        Comment[]
+  notifications   Notification[]
+}
+
+model Task{
+  id              String            @id @default(uuid())
+  title           String          
+  status          TaskStatus            @default(TODO)
+
+  creatorId       String            
+  creator         User              @relation("TaskCreator", fields: [creatorId], references: [id])
+  assigneeId      String?
+  assignee        User?             @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  comments        Comment[]
+  notifications   Notification[]            
+}
+
+model Comment{
+  id              String            @id @default(uuid())
+  body            String            
+
+  taskId          String
+  task            Task              @relation(fields: [taskId], references: [id])
+  userId          String
+  user            User              @relation(fields: [userId], references: [id])
+}
+
+model Notification{
+  id              String            @id @default(uuid())
+  message         String            
+  read            Boolean           @default(false)
+
+  userId          String
+  user            User              @relation(fields: [userId], references: [id])
+  taskId          String?
+  task            Task?             @relation(fields: [taskId], references: [id])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
