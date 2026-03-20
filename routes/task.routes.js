@@ -1,5 +1,5 @@
-import {Router} from 'express'
-import {createTask,createTaskforOtherUsers,getAllTasks,getTask} from '../controllers/task.controller.js'
+import { Router } from 'express'
+import { createTask,createTaskforOtherUsers,getAllTasks,getTask, updateTaskStatus, assignTask } from '../controllers/task.controller.js'
 import { authorize } from '../middleware/auth.middleware.js'
 import { createComment, getComments, getComment, deleteComment } from '../controllers/comment.controller.js'
 
@@ -13,6 +13,10 @@ taskRouter.get('/:id', getTask)
 taskRouter.post('/create', authorize, createTask)
 
 taskRouter.post('/assign', authorize, createTaskforOtherUsers)
+
+taskRouter.patch('/assign/:id', authorize, assignTask)
+
+taskRouter.patch('/status/:id', authorize, updateTaskStatus)
 
 // Comment specific routes
 taskRouter.get('/comments', getComments)
