@@ -7,13 +7,14 @@ import taskRouter from './routes/task.routes.js'
 import notificationRouter from './routes/notification.routes.js'
 
 import cookieParser from 'cookie-parser'
+import limiter from './middleware/ratelimit.middleware.js'
 
 const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
 
-app.get('/',(req,res)=>{
+app.get('/',limiter,(req,res)=>{
     res.send('Welcome to Task simulator')
 })
 app.use('/api/auth',authRouter)
